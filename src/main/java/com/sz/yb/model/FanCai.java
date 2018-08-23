@@ -6,7 +6,7 @@ package com.sz.yb.model;
 public class FanCai {
    /* private int id;周杰添加*/
    
-   //不错，你已经可以用了。
+   //不错，你已经可以用了。  by min at 2018-8-23
    
    
     private String fname;
