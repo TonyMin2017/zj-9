@@ -4,7 +4,7 @@ package com.sz.yb.model;
  * Created by tony on 2018/8/21.
  */
 public class FanCai {
-
+   /* private int id;周杰添加*/
     private String fname;
     private String mname;
 
