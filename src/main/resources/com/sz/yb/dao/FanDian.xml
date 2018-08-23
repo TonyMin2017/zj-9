@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sz.yb.dao.FanDianDao">
+    <!--命名空间-->
+
+    <!--配置一个fanDianMap: 一对多；-->
+    <resultMap id="fanDianMap" type="com.sz.yb.model.FanDian">
+        <id column="fid" property="fid" javaType="int" />
+        <result column="fname" property="fname" javaType="java.lang.String" />
+        <collection property="list" javaType="java.util.List" ofType="com.sz.yb.model.YbMenu">
+            <id column="mid" property="mid" javaType="int"/>
+            <result column="mname" property="mname" javaType="java.lang.String"/>
+            <result column="fid" property="fid" javaType="int"/>
+        </collection>
+    </resultMap>
+
+    <!--查询所有记录   : new one  升级为带有动态条件的查询；
+     如果没有where 语句 才可以用where if ：是取共同交集
+    <select id="getAllFanDian" parameterType="com.sz.yb.model.FanCai"  resultMap="fanDianMap">
+        SELECT * FROM ybfandian f, ybmenu m
+        <where>
+            <if test="1==1">
+                f.`fid`=m.`fid`
+            </if>
+            <if test="fname!=null">
+                and f.fname like concat('%',#{fname},'%')
+            </if>
+            <if test="mname!=null">
+                and m.mname like concat('%',#{mname},'%')
+            </if>
+        </where>
+    </select>
+ -->
+
+
+    <!--查询所有记录   : new one  升级为带有动态条件的查询； 第二种玩法：2018-8-22
+     如果没有where 语句 才可以用where if ：是取共同交集
+    <select id="getAllFanDian" parameterType="com.sz.yb.model.FanCai"  resultMap="fanDianMap">
+        SELECT * FROM ybfandian f, ybmenu m  where f.`fid`=m.`fid`
+            <if test="fname!=null">
+                and f.fname like concat('%',#{fname},'%')
+            </if>
+            <if test="mname!=null">
+                and m.mname like concat('%',#{mname},'%')
+            </if>
+
+    </select>
+-->
+
+    <!--查询所有记录   : new one  升级为带有动态条件的查询；
+     choose when    ; 相当 于java中的switch case 语句 ，只选择中间一个。
+    <select id="getAllFanDian" parameterType="com.sz.yb.model.FanCai"  resultMap="fanDianMap">
+        SELECT * FROM ybfandian f, ybmenu m WHERE f.`fid`=m.`fid`
+        <choose>
+            <when test="fname!=null">
+                and f.fname like concat('%',#{fname},'%')
+            </when>
+            <when test="mname!=null">
+                and m.mname like concat('%',#{mname},'%')
+            </when>
+            <otherwise>
+                and  1=1
+            </otherwise>
+        </choose>
+    </select>
+     -->
+
+    <!--插入一条记录；-->
+    <insert id="addFanDian" parameterType="com.sz.yb.model.FanDian" useGeneratedKeys="true" keyProperty="fid">
+        INSERT  into ybfandian (fname) VALUES  (#{fname})
+        <selectKey  resultType="int"  keyProperty="fid">
+            SELECT LAST_INSERT_ID() AS ID
+        </selectKey>
+
+    </insert>
+
+    
+
+    <!--查询所有记录   : old one-->
+    <select id="getAllFanDian2" resultType="com.sz.yb.model.FanDian">
+        select fid,fname from ybfandian
+    </select>
+
+    <!--查询所有记录，带查询条件的-->
+    <select id="getAllFanDianByID" parameterType="int" resultType="com.sz.yb.model.FanDian">
+        select fid,fname from ybfandian where fid=#{fid}
+    </select>
+
+    <!--查询所有记录，带查询条件的-->
+    <select id="getAllFanDianByName" parameterType="String" resultType="com.sz.yb.model.FanDian">
+        select fid,fname from ybfandian where fname like concat('%',#{fname},'%')
+    </select>
+
+    <!--查询所有记录，带分页的-->
+    <select id="getAllFanDianByPage" parameterType="com.sz.yb.model.Pager" resultType="com.sz.yb.model.FanDian">
+        select fid,fname from ybfandian limit #{start},#{size}
+    </select>
+
+
+    <!--删除一条记录-->
+    <delete id="deleteFandian" parameterType="int">
+        delete from ybfandian where fid=#{fid}
+    </delete>
+
+
+    <!--//修改一条记录；-->
+  <update id="updateFanDian" parameterType="com.sz.yb.model.FanDian">
+      update ybfandian set fname=#{fname} where fid=#{fid}
+  </update>
+
+
+
+    <!--查询所有记录   : 传入参数是一个数组：   -->
+    <select id="getAllFanDian5"   resultMap="fanDianMap">
+        SELECT * FROM ybfandian f, ybmenu m WHERE f.`fid`=m.`fid`
+        and f.fid in
+        <foreach collection="array" item="fd" open="(" separator="," close=")">
+            #{fd}
+        </foreach>
+    </select>
+</mapper>
