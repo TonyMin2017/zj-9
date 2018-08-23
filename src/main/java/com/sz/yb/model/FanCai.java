@@ -5,6 +5,8 @@ package com.sz.yb.model;
  */
 public class FanCai {
    /* private int id;周杰添加*/
+   
+   //不错，你已经可以用了。
     private String fname;
     private String mname;
 
